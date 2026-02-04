@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Eternal Chapter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,500&family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --text-silver: #d1d1d1;
+            --text-dim: #777777;
+            --accent-white: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-silver);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            padding: 3.5rem;
+            border-radius: 4px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            text-align: center;
+            max-width: 450px;
+            width: 85%;
+            border: 1px solid #252525;
+            z-index: 10;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            letter-spacing: 3px;
+            color: var(--accent-white);
+            margin-bottom: 1rem;
+        }
+
+        p { font-weight: 200; line-height: 1.8; color: var(--text-dim); }
+
+        input[type="date"] {
+            border: none;
+            border-bottom: 1px solid #333;
+            padding: 12px;
+            background: transparent;
+            font-family: inherit;
+            color: white;
+            margin: 1.5rem 0;
+            outline: none;
+            text-align: center;
+            width: 70%;
+        }
+
+        .btn {
+            background: transparent;
+            color: var(--accent-white);
+            border: 1px solid var(--accent-white);
+            padding: 14px 40px;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: 0.5s;
+            margin-top: 10px;
+        }
+
+        .btn:hover { background: var(--accent-white); color: #000; }
+
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 2rem 0;
+            border-top: 1px solid #252525;
+            border-bottom: 1px solid #252525;
+            padding: 20px 0;
+        }
+
+        .timer-unit { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #fff; }
+        .timer-label { font-size: 0.5rem; text-transform: uppercase; color: var(--text-dim); }
+
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0; }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.5; }
+        }
+
+        #main-content { display: none; opacity: 0; transition: opacity 2s ease; }
+        
+        /* The hidden player wrapper */
+        #music-container {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="music-container"></div>
+
+    <div id="login-screen" class="glass-card">
+        <h1>Hii hii!</h1>
+        <p>Enter the date we started:</p>
+        <input type="date" id="anniversaryDate">
+        <br>
+        <button class="btn" onclick="checkDate()">Enter :)</button>
+        <p id="error-msg" style="display:none; color: #666; font-size: 0.7rem; margin-top: 10px;">Incorrect date.</p>
+    </div>
+
+    <div id="main-content" class="glass-card">
+        <h1>Happy Monthsary</h1>
+        
+        <div class="timer-grid">
+            <div><span class="timer-unit" id="days">0</span><span class="timer-label">Days</span></div>
+            <div><span class="timer-unit" id="hours">0</span><span class="timer-label">Hours</span></div>
+            <div><span class="timer-unit" id="mins">0</span><span class="timer-label">Mins</span></div>
+            <div><span class="timer-unit" id="secs">0</span><span class="timer-label">Secs</span></div>
+        </div>
+
+        <p style="font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: #fff;">
+            Akii! 
+        </p>
+
+        <p style="font-size: 0.7rem; font-style: italic; color: var(--text-dim); margin-top: 20px;">
+            Just wanted to say I love what we have. Distance or not, you’re my favorite person to talk to and the best part of my day. I’m really proud of us for making this work. I love youuu!
+        </p>
+    </div>
+
+    <script>
+        // !!! CHANGE YOUR DATE HERE !!!
+        const startDateString = "2025-12-04"; 
+        
+        // Extracting your File ID from the link you provided
+        const fileID = "1Crbi-AReOEtmWYLZAivROnZ79JRAQAUD";
+
+        function checkDate() {
+            const inputDate = document.getElementById('anniversaryDate').value;
+
+            if (inputDate === startDateString) {
+                // Injects the Google Drive iframe to play the music
+                const musicBox = document.getElementById('music-container');
+                musicBox.innerHTML = `<iframe src="https://drive.google.com/file/d/${fileID}/preview" allow="autoplay"></iframe>`;
+                
+                document.getElementById('login-screen').style.display = 'none';
+                const main = document.getElementById('main-content');
+                main.style.display = 'block';
+                setTimeout(() => { main.style.opacity = '1'; }, 50);
+                
+                startStars();
+                setInterval(updateTimer, 1000);
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        function updateTimer() {
+            const start = new Date(startDateString);
+            const now = new Date();
+            const diff = now - start;
+            document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('hours').innerText = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            document.getElementById('mins').innerText = Math.floor((diff / 1000 / 60) % 60);
+            document.getElementById('secs').innerText = Math.floor((diff / 1000) % 60);
+        }
+
+        function startStars() {
+            for(let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.width = Math.random() * 2 + 'px';
+                star.style.height = star.style.width;
+                star.style.animation = `twinkle ${Math.random() * 3 + 2}s infinite ${Math.random() * 5}s`;
+                document.body.appendChild(star);
+            }
+        }
+    </script>
+</body>
+</html>
